@@ -18,7 +18,7 @@ def _eval(path_to_checkpoint: str, path_to_data_dir: str, path_to_results_dir: s
     model.load(path_to_checkpoint)
 
     dataset = Dataset(path_to_data_dir, Dataset.Mode.EVAL)
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=False, num_workers=2, pin_memory=True)
+    dataloader = DataLoader(dataset, batch_size=10, shuffle=False, num_workers=2, pin_memory=True)
 
     print('Start evaluating')
 
@@ -34,12 +34,20 @@ def _eval(path_to_checkpoint: str, path_to_data_dir: str, path_to_results_dir: s
 
             all_logits.append(logits.cpu())
             all_multilabels.append(multilabels.cpu())
+            break
+        #print("before all_logits = ", all_logits)
+        #print("before all_multilabels = ", all_multilabels)
 
         all_logits = torch.cat(all_logits, dim=0)
         all_multilabels = torch.cat(all_multilabels, dim=0)
+        #print("after all_logits = ", all_logits)
+        #print("after all_multilabels = ", all_multilabels)
+        
 
         probabilities = torch.sigmoid(all_logits)
+        #print("probabilities = ", probabilities)
         _, sorted_indices = probabilities.t().sort(dim=1, descending=True)
+        #print("sorted_indices = ", sorted_indices)
 
         aps = []
         for sorted_index, multilabel in zip(sorted_indices, all_multilabels.t()):

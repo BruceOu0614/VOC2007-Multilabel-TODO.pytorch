@@ -89,7 +89,7 @@ class Dataset(torch.utils.data.Dataset):
         labels = [Dataset.CATEGORY_TO_LABEL_DICT[obj.name] for obj in annotation.objects if not obj.difficult]
         for label in labels:
             multilabels[label] = 1
-        multilabels = torch.tensor(multilabels, dtype=torch.long)
+        multilabels = torch.tensor(multilabels, dtype=torch.float)
 
         image = Image.open(os.path.join(self._path_to_jpeg_images_dir, annotation.filename))
 
